@@ -1,4 +1,4 @@
-package com.garv.DeadlineAwareSimulation;
+package com.java.DeadlineAwareSimulation;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
