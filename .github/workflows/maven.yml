@@ -1,0 +1,31 @@
+name: CloudSim Java CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Compile CloudSim project
+      run: |
+        mkdir -p out
+        find src -name "*.java" > sources.txt
+        javac -cp "lib/*" -d out @sources.txt
+
+    - name: Run Simulation
+      run: |
+        java -cp "out:lib/*" com.java.GreenCloudSimExample3_04
