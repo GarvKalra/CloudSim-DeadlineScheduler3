@@ -1,4 +1,4 @@
-package com.java;
+package com.garv.cloudsim;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -11,7 +11,8 @@ public class DeadlineAwareSimulation {
         int numUsers = 1;
         Calendar calendar = Calendar.getInstance();
         boolean traceFlag = false;
-
+        int VMs=2;
+        int cloudlets=5;	
         CloudSim.init(numUsers, calendar, traceFlag);
 
         Datacenter datacenter = createDatacenter("Datacenter_1");
@@ -21,14 +22,14 @@ public class DeadlineAwareSimulation {
         List<Cloudlet> cloudletList = new ArrayList<>();
 
         // VMs
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < VMs; i++) {
             Vm vm = new Vm(i, broker.getId(), 1000, 1, 2048, 1000, 10000,
                     "Xen", new CloudletSchedulerTimeShared());
             vmlist.add(vm);
         }
 
         // Deadline Cloudlets
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < cloudlets; i++) {
             DeadlineCloudlet cloudlet = new DeadlineCloudlet(
                     i, 10000, 1, 300, 300,
                     new UtilizationModelFull(), new UtilizationModelFull(), new UtilizationModelFull(),
@@ -105,18 +106,27 @@ public class DeadlineAwareSimulation {
 
     private static Datacenter createDatacenter(String name) throws Exception {
         List<Host> hostList = new ArrayList<>();
-        List<Pe> peList = new ArrayList<>();
-        peList.add(new Pe(0, new PeProvisionerSimple(2000)));
+        
+        int numHosts = 20; // Adjust depending on needs
+        int pePerHost = 8; // 8 cores per host
 
-        Host host = new Host(
-                0,
-                new RamProvisionerSimple(4096),
-                new BwProvisionerSimple(10000),
-                1000000,
-                peList,
-                new VmSchedulerTimeShared(peList)
-        );
-        hostList.add(host);
+        for (int i = 0; i < numHosts; i++) {
+            List<Pe> peList = new ArrayList<>();
+            for (int j = 0; j < pePerHost; j++) {
+                peList.add(new Pe(j, new PeProvisionerSimple(2000))); // Each PE has 2000 MIPS
+            }
+
+            Host host = new Host(
+                    i,
+                    new RamProvisionerSimple(32768),     // 32 GB RAM
+                    new BwProvisionerSimple(10000),
+                    1000000,                              // Storage
+                    peList,
+                    new VmSchedulerTimeShared(peList)
+            );
+
+            hostList.add(host);
+        }
 
         DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
                 "x86", "Linux", "Xen", hostList,
@@ -126,6 +136,7 @@ public class DeadlineAwareSimulation {
                 new VmAllocationPolicySimple(hostList),
                 new LinkedList<Storage>(), 0);
     }
+
 
     // Inner class: Deadline-Aware Broker
     public static class DeadlineAwareBroker extends DatacenterBroker {
