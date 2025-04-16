@@ -11,8 +11,8 @@ public class DeadlineAwareSimulation {
         int numUsers = 1;
         Calendar calendar = Calendar.getInstance();
         boolean traceFlag = false;
-        int VMs=2;
-        int cloudlets=5;	
+        int VMs=200;
+        int cloudlets=500;	
         CloudSim.init(numUsers, calendar, traceFlag);
 
         Datacenter datacenter = createDatacenter("Datacenter_1");
