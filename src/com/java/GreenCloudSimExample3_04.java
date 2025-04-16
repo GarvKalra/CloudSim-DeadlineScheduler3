@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class GreenCloudSimExample3_04 {
-    private static final int CLOUDLET_NUM = 5;
+    private static final int CLOUDLET_NUM = 200;
     private static final DecimalFormat df = new DecimalFormat("#.###");
 
     public static void main(String[] args) {
